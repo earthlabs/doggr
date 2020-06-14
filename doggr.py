@@ -62,65 +62,69 @@ class DownloadWorker(Thread):
             )
             print(url + ", " + str(ct) + ", " + str(percent))
             page = requests.get(url).text
-            lease = re.findall("Lease</label> <br />\s*(.*?)\s*</div", page)[0]
-            well = re.findall("Well #</label> <br />\s*(.*?)\s*</div", page)[0]
+            lease = re.findall(r"Lease</label> <br />\s*(.*?)\s*</div", page)[
+                0
+            ]
+            well = re.findall(r"Well #</label> <br />\s*(.*?)\s*</div", page)[
+                0
+            ]
             county = re.findall(
-                "County</label> <br />\s*(.*)<span>\s\[(.*)\]\s*</span>", page
+                r"County</label> <br />\s*(.*)<span>\s\[(.*)\]\s*</span>", page
             )[0][0]
             countycode = re.findall(
-                "County</label> <br />\s*(.*)<span>\s\[(.*)\]\s*</span>", page
+                r"County</label> <br />\s*(.*)<span>\s\[(.*)\]\s*</span>", page
             )[0][1]
             district = int(
-                re.findall("District</label> <br />\s*(.*?)\s*</div", page)[0]
+                re.findall(r"District</label> <br />\s*(.*?)\s*</div", page)[0]
             )
             operator = re.findall(
-                "Operator</label> <br />\s*(.*)<span>\s\[(.*)\]\s*</span>",
+                r"Operator</label> <br />\s*(.*)<span>\s\[(.*)\]\s*</span>",
                 page,
             )[0][0]
             operatorcode = re.findall(
-                "Operator</label> <br />\s*(.*)<span>\s\[(.*)\]\s*</span>",
+                r"Operator</label> <br />\s*(.*)<span>\s\[(.*)\]\s*</span>",
                 page,
             )[0][1]
             field = re.findall(
-                "Field</label> <br />\s*(.*)<span>\s\[(.*)\]\s*</span>", page
+                r"Field</label> <br />\s*(.*)<span>\s\[(.*)\]\s*</span>", page
             )[0][0]
             fieldcode = re.findall(
-                "Field</label> <br />\s*(.*)<span>\s\[(.*)\]\s*</span>", page
+                r"Field</label> <br />\s*(.*)<span>\s\[(.*)\]\s*</span>", page
             )[0][1]
             area = re.findall(
-                "Area</label> <br />\s*(.*)<span>\s\[(.*)\]\s*</span>", page
+                r"Area</label> <br />\s*(.*)<span>\s\[(.*)\]\s*</span>", page
             )[0][0]
             areacode = re.findall(
-                "Area</label> <br />\s*(.*)<span>\s\[(.*)\]\s*</span>", page
+                r"Area</label> <br />\s*(.*)<span>\s\[(.*)\]\s*</span>", page
             )[0][1]
             section = re.findall(
-                "Section</label><br />\s*(.*?)\s*</div", page
+                r"Section</label><br />\s*(.*?)\s*</div", page
             )[0]
             township = re.findall(
-                "Township</label><br />\s*(.*?)\s*</div", page
+                r"Township</label><br />\s*(.*?)\s*</div", page
             )[0]
-            rnge = re.findall("Range</label><br />\s*(.*?)\s*</div", page)[0]
+            rnge = re.findall(r"Range</label><br />\s*(.*?)\s*</div", page)[0]
             bm = re.findall(
-                "Base Meridian</label><br />\s*(.*?)\s*</div", page
+                r"Base Meridian</label><br />\s*(.*?)\s*</div", page
             )[0]
             wellstatus = re.findall(
-                "Well Status</label><br />\s*(.*?)\s*</div", page
+                r"Well Status</label><br />\s*(.*?)\s*</div", page
             )[0]
             pwt = re.findall(
-                "Pool WellTypes</label> <br />\s*(.*?)\s*</div", page
+                r"Pool WellTypes</label> <br />\s*(.*?)\s*</div", page
             )[0]
             spuddate = re.findall(
-                "SPUD Date</label> <br />\s*(.*?)\s*</div", page
+                r"SPUD Date</label> <br />\s*(.*?)\s*</div", page
             )[0]
             gissrc = re.findall(
-                "GIS Source</label> <br />\s*(.*?)\s*</div", page
+                r"GIS Source</label> <br />\s*(.*?)\s*</div", page
             )[0]
-            elev = re.findall("Datum</label> <br />\s*(.*?)\s*</div", page)[0]
+            elev = re.findall(r"Datum</label> <br />\s*(.*?)\s*</div", page)[0]
             latitude = re.findall(
-                "Latitude</label> <br />\s*(.*?)\s*</div", page
+                r"Latitude</label> <br />\s*(.*?)\s*</div", page
             )[0]
             longitude = re.findall(
-                "Longitude</label> <br />\s*(.*?)\s*</div", page
+                r"Longitude</label> <br />\s*(.*?)\s*</div", page
             )[0]
             hh = {}
             hh["lease"] = lease
@@ -161,10 +165,10 @@ class DownloadWorker(Thread):
             prod = re.findall('{"Production+(.*?)}', page)
             pp = pd.DataFrame()
             for idx, i in enumerate(prod):
-                p = pd.DataFrame(index=[re.findall("Date\(+(.*?)\)", i)[0]])
+                p = pd.DataFrame(index=[re.findall(r"Date\(+(.*?)\)", i)[0]])
                 if len(prod) > 0:
                     p["date"] = datetime.datetime.fromtimestamp(
-                        int(re.findall("Date\(+(.*?)\)", i)[0][:-3])
+                        int(re.findall(r"Date\(+(.*?)\)", i)[0][:-3])
                     ).strftime("%Y-%m-%d")
                     p["oil"] = re.findall('OilProduced":+(.*?),', i)[0]
                     p["water"] = re.findall('WaterProduced":+(.*?),', i)[0]
@@ -180,12 +184,12 @@ class DownloadWorker(Thread):
                         0
                     ].replace('"', "")
                     p["waterdisp"] = re.findall(
-                        'WaterDisposition":+(.*?),', i
+                        r'WaterDisposition":+(.*?),', i
                     )[0].replace('"', "")
-                    p["pwtstatus_p"] = re.findall('PWTStatus":+(.*?),', i)[
+                    p["pwtstatus_p"] = re.findall(r'PWTStatus":+(.*?),', i)[
                         0
                     ].replace('"', "")
-                    p["welltype_p"] = re.findall('WellType":+(.*?),', i)[
+                    p["welltype_p"] = re.findall(r'WellType":+(.*?),', i)[
                         0
                     ].replace('"', "")
                     p["status_p"] = re.findall('Status":+(.*?),', i)[
@@ -217,40 +221,42 @@ class DownloadWorker(Thread):
             inj = re.findall('{"Injection+(.*?)}', page)
             jj = pd.DataFrame()
             for idx, i in enumerate(inj):
-                j = pd.DataFrame(index=[re.findall("Date\(+(.*?)\)", i)[0]])
+                j = pd.DataFrame(index=[re.findall(r"Date\(+(.*?)\)", i)[0]])
                 if len(inj) > 0:
                     j["date"] = datetime.datetime.fromtimestamp(
-                        int(re.findall("Date\(+(.*?)\)", i)[0][:-3])
+                        int(re.findall(r"Date\(+(.*?)\)", i)[0][:-3])
                     ).strftime("%Y-%m-%d")
                     j["wtrstm"] = re.findall(
-                        'WaterOrSteamInjected":+(.*?),', i
+                        r'WaterOrSteamInjected":+(.*?),', i
                     )[0]
-                    j["gasair"] = re.findall('GasOrAirInjected":+(.*?),', i)[0]
+                    j["gasair"] = re.findall(r'GasOrAirInjected":+(.*?),', i)[
+                        0
+                    ]
                     j["daysinj"] = re.findall(
-                        'NumberOfDaysInjected":+(.*?),', i
+                        r'NumberOfDaysInjected":+(.*?),', i
                     )[0]
                     j["pinjsurf"] = re.findall(
-                        'SurfaceInjectionPressure":+(.*?),', i
+                        r'SurfaceInjectionPressure":+(.*?),', i
                     )[0]
-                    j["wtrsrc"] = re.findall('SourceOfWater":+(.*?),', i)[
+                    j["wtrsrc"] = re.findall(r'SourceOfWater":+(.*?),', i)[
                         0
                     ].replace('"', "")
-                    j["wtrknd"] = re.findall('KindOfWater":+(.*?),', i)[
+                    j["wtrknd"] = re.findall(r'KindOfWater":+(.*?),', i)[
                         0
                     ].replace('"', "")
-                    j["pwtstatus_i"] = re.findall('PWTStatus":+(.*?),', i)[
+                    j["pwtstatus_i"] = re.findall(r'PWTStatus":+(.*?),', i)[
                         0
                     ].replace('"', "")
-                    j["welltype_i"] = re.findall('WellType":+(.*?),', i)[
+                    j["welltype_i"] = re.findall(r'WellType":+(.*?),', i)[
                         0
                     ].replace('"', "")
-                    j["status_i"] = re.findall('Status":+(.*?),', i)[
+                    j["status_i"] = re.findall(r'Status":+(.*?),', i)[
                         0
                     ].replace('"', "")
-                    j["poolcode_i"] = re.findall('PoolCode":+(.*?),', i)[
+                    j["poolcode_i"] = re.findall(r'PoolCode":+(.*?),', i)[
                         0
                     ].replace('"', "")
-                    if re.findall('YearlySum":+(.*?),', i)[0] != "true":
+                    if re.findall(r'YearlySum":+(.*?),', i)[0] != "true":
                         jj = jj.append(j).replace("null", np.nan, regex=True)
             if len(jj) > 0:
                 jj["date"] = pd.to_datetime(jj["date"])

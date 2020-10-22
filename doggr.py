@@ -167,7 +167,7 @@ class DownloadWorker(Thread):
             for idx, i in enumerate(prod):
                 p = pd.DataFrame(index=[re.findall(r"Date\(+(.*?)\)", i)[0]])
                 if len(prod) > 0:
-                    p["date"] = datetime.datetime.fromtimestamp(
+                    p["date"] = datetime.fromtimestamp(
                         int(re.findall(r"Date\(+(.*?)\)", i)[0][:-3])
                     ).strftime("%Y-%m-%d")
                     p["oil"] = re.findall('OilProduced":+(.*?),', i)[0]
@@ -223,7 +223,7 @@ class DownloadWorker(Thread):
             for idx, i in enumerate(inj):
                 j = pd.DataFrame(index=[re.findall(r"Date\(+(.*?)\)", i)[0]])
                 if len(inj) > 0:
-                    j["date"] = datetime.datetime.fromtimestamp(
+                    j["date"] = datetime.fromtimestamp(
                         int(re.findall(r"Date\(+(.*?)\)", i)[0][:-3])
                     ).strftime("%Y-%m-%d")
                     j["wtrstm"] = re.findall(
